@@ -1,0 +1,301 @@
+---
+title: "CZU_EDA"
+author: "Bryant Willoughby"
+date: "2023-08-01"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(readr)
+library(dplyr)
+library(ggplot2)
+```
+
+Read in Data 
+
+```{r}
+data <- read_csv("C:/Users/Bryant Willoughby/Documents/DRUMS/raw(CZU)/Final Data Sets/prefire_czu_fulldata.csv")
+
+```
+Check to see if there are any completely missing rows (records)
+- there are none
+```{r}
+head(data)
+
+#keeping rows that have complete information in all columns (except the first four) or have at least one non-missing value in any of the columns (excluding the first four columns).
+cleaned <- data[complete.cases(data[,-(1:4)]) | rowSums(!is.na(data[,-(1:4)])) > 0, ]
+
+# Print the updated data frame
+head(cleaned)
+
+nrow(data) - nrow(cleaned) #0
+```
+
+```{r}
+#find num of missing vals
+missing_counts <- colSums(is.na(cleaned))
+
+#create df w/ col names and missing values 
+missing_data <- data.frame(
+  variable = names(missing_counts), 
+  missing_values = missing_counts
+)
+
+print(missing_data)
+
+```
+
+Map values with more than 5% missing values 
+```{r}
+# Initialize an empty vector to store the names that satisfy the condition
+selected_labels <- c()
+
+# Loop through the list and add the names that meet the condition to the vector
+for (label in names(missing_counts)) {
+  value <- missing_counts[[label]]
+  if (value > 4430) {
+    selected_labels <- c(selected_labels, label)
+  }
+}
+
+# Print the selected labels
+print(selected_labels) #26
+```
+
+```{r}
+map_data <- data %>%
+  select(x, y, all_of(selected_labels))
+
+```
+
+```{r}
+source("C:/Users/Bryant Willoughby/Documents/DRUMS/code/week 1/maps_function.R")
+
+for (col_name in names(map_data)[3:ncol(map_data)]){
+  #note: col_name is a character string of var names
+  col <- map_data[[col_name]] #values of each variable 
+  
+  p <- map.heatmap(map_data$x, map_data$y, col, legendTitle = col_name, 
+                   mainTitle = paste(col_name, "across region"))
+  print(p)
+}
+
+```
+
+Remove variables with >50% (44290 obs) missing data 
+```{r}
+# Initialize an empty vector to store the names that satisfy the condition
+selected_labels <- c()
+
+# Loop through the list and add the names that meet the condition to the vector
+for (label in names(missing_counts)) {
+  value <- missing_counts[[label]]
+  if (value > 44290) {
+    selected_labels <- c(selected_labels, label)
+  }
+}
+
+# Print the selected labels
+print(selected_labels)
+```
+```{r}
+map_data <- data %>%
+  select(x, y, all_of(selected_labels))
+
+```
+
+```{r}
+source("C:/Users/Bryant Willoughby/Documents/DRUMS/code/week 1/maps_function.R")
+
+for (col_name in names(map_data)[3:ncol(map_data)]){
+  #note: col_name is a character string of var names
+  col <- map_data[[col_name]] #values of each variable 
+  
+  p <- map.heatmap(map_data$x, map_data$y, col, legendTitle = col_name, 
+                   mainTitle = paste(col_name, "across region"))
+  print(p)
+}
+
+```
+
+
+```{r}
+ncol(cleaned) #119
+
+map_data <- data %>%
+  select(x, y, all_of(selected_labels))
+
+#remove variables with 'significant' missing data 
+cleaned <- cleaned %>%
+  select(-all_of(selected_labels))
+
+ncol(cleaned) #111
+
+```
+
+Check remaining variables with missing values 
+```{r}
+#find num of missing vals
+missing_counts <- colSums(is.na(cleaned))
+
+#create df w/ col names and missing values 
+missing_data <- data.frame(
+  variable = names(missing_counts), 
+  missing_values = missing_counts
+)
+
+print(missing_data)
+
+```
+
+```{r}
+# Initialize an empty vector to store the names that satisfy the condition
+selected_labels <- c()
+
+# Loop through the list and add the names that meet the condition to the vector
+for (label in names(missing_counts)) {
+  value <- missing_counts[[label]]
+  if (value > 4430) {
+    selected_labels <- c(selected_labels, label)
+  }
+}
+
+# Print the selected labels
+print(selected_labels) #18
+```
+
+```{r}
+map_data <- data %>%
+  select(x, y, all_of(selected_labels))
+
+```
+
+```{r}
+source("C:/Users/Bryant Willoughby/Documents/DRUMS/code/week 1/maps_function.R")
+
+for (col_name in names(map_data)[3:ncol(map_data)]){
+  #note: col_name is a character string of var names
+  col <- map_data[[col_name]] #values of each variable 
+  
+  p <- map.heatmap(map_data$x, map_data$y, col, legendTitle = col_name, 
+                   mainTitle = paste(col_name, "across region"))
+  print(p)
+}
+
+```
+
+Removing variables with missing values in same general vicinity 
+- most ECOSTRESS vars on 8/12 
+```{r}
+ncol(cleaned) #111
+
+cleaned <- cleaned %>%
+  select(-c("ET_2020.08.12.01.00.00", "ESI_2020.08.12.01.00.00", "WUE_2020.08.12.01.00.00", 
+            "LAI_2020.08.09.00.00.00"))
+
+ncol(cleaned) #107
+```
+
+Final maps with remaining variables we will impute with KNN
+```{r}
+#find num of missing vals
+missing_counts <- colSums(is.na(cleaned))
+
+#create df w/ col names and missing values 
+missing_data <- data.frame(
+  variable = names(missing_counts), 
+  missing_values = missing_counts
+)
+```
+
+```{r}
+# Initialize an empty vector to store the names that satisfy the condition
+selected_labels <- c()
+
+# Loop through the list and add the names that meet the condition to the vector
+for (label in names(missing_counts)) {
+  value <- missing_counts[[label]]
+  if (value > 4430) {
+    selected_labels <- c(selected_labels, label)
+  }
+}
+
+# Print the selected labels
+print(selected_labels) #15
+```
+
+```{r}
+map_data <- data %>%
+  select(x, y, all_of(selected_labels))
+
+```
+
+- less missing values comparatively with other variables already removed
+- those with more missing values are spread out along region; more suitable for KNN
+```{r}
+source("C:/Users/Bryant Willoughby/Documents/DRUMS/code/week 1/maps_function.R")
+
+for (col_name in names(map_data)[3:ncol(map_data)]){
+  #note: col_name is a character string of var names
+  col <- map_data[[col_name]] #values of each variable 
+  
+  p <- map.heatmap(map_data$x, map_data$y, col, legendTitle = col_name, 
+                   mainTitle = paste(col_name, "across region"))
+  print(p)
+}
+
+```
+
+
+Perform KNN on dataset
+```{r}
+source("C:/Users/Bryant Willoughby/Documents/DRUMS/code/week 1/KNN_imputation_function.R")
+
+for (i in 5:ncol(cleaned)){
+  cleaned[[i]] <- knn(cleaned$x, cleaned$y, cleaned[[i]])
+}
+
+```
+
+confirm there are no more missing values 
+```{r}
+#find num of missing vals
+missing_counts <- colSums(is.na(cleaned))
+
+#create df w/ col names and missing values 
+missing_data <- data.frame(
+  variable = names(missing_counts), 
+  missing_values = missing_counts
+)
+
+print(missing_data)
+
+anyNA(cleaned)
+
+```
+
+Rename x/y variables as long/lat respectively
+Change LC_2020.01.02.00.00.00 to LC 
+```{r}
+cleaned <- cleaned %>%
+  select(y, x, everything()) %>%
+  rename("Lat" = y, "Lon" = x, "LC" = LC_2020.01.02.00.00.00)
+
+```
+
+
+Write this cleaned data set to a csv file to work with
+```{r}
+#write.csv(cleaned, file = "C:/Users/Bryant Willoughby/Documents/DRUMS/raw(CZU)/Final Data Sets/prefire_czu_finaldata.csv", row.names = F)
+          
+```
+
+
+
+
+
+
+
+
