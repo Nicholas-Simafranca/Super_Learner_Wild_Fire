@@ -1,0 +1,234 @@
+---
+title: "KNN"
+author: "Bryant Willoughby"
+date: "2023-06-06"
+output: pdf_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = "C:/Users/Bryant Willoughby/Documents/DRUMS/output/week 2")
+
+library(tidyverse)
+library(readr)
+library(dplyr)
+library(ggplot2)
+
+```
+
+# Read in Data 
+
+```{r}
+fulldata <- read_csv("C:/Users/Bryant Willoughby/Documents/DRUMS/raw(KNP)/Final data sets/prefire_knp_blr_fulldata.csv")
+fulldata
+
+```
+
+Check to see if there are any completely missing rows (records)
+- If so, remove these up front 
+- note: there were 214 records with completley missing data that I removed 
+```{r}
+head(fulldata)
+
+# Remove rows with all missing values
+cleaned <- fulldata[complete.cases(fulldata[,-(1:4)]) | rowSums(!is.na(fulldata[,-(1:4)])) > 0, ]
+  #remove rows where all values across columns are missing
+
+# Print the updated data frame
+head(cleaned)
+
+nrow(fulldata) - nrow(cleaned) #214
+```
+
+Explore other missing values 
+- See the missing data by column and explore nature of missingness 
+  - Is it local, spread out, how many values, etc. 
+```{r}
+head(cleaned)
+anyNA(cleaned)
+
+for (i in seq_along(cleaned)){
+  coldata <- pull(cleaned, i)
+  print(names(cleaned)[i])
+  print(sum(is.na(coldata)))
+}
+
+```
+
+
+Remove variables with most missingness (>48,000 missing)
+- Imputing this number of missing values raises concern for biasing and incorrect analysis
+  - LST_2021.09.05.07.00.00
+  - LST_2021.09.12.05.00.00
+  - NDVI_2021.09.11
+```{r}
+ncol(cleaned) #119
+
+#remove 3 variables with enough missing data to where imputation would 
+cleaned <- cleaned %>%
+  select(-c(LST_2021.09.05.07.00.00, LST_2021.09.12.05.00.00, NDVI_2021.09.11))
+
+ncol(cleaned) #116
+
+```
+
+Look at 8/31 NDVI and explore outliers 
+- recall: NDVI is measured btwn 0-1
+```{r}
+#notice: values for this col are not within measurement range of variable 
+summary(cleaned$NDVI_2021.08.31)
+
+#replace the values not btwn 0-1 with NAs 
+cleaned$NDVI_2021.08.31 <- ifelse(cleaned$NDVI_2021.08.31 < 0 | cleaned$NDVI_2021.08.31 > 1, 
+                                  NA, cleaned$NDVI_2021.08.31)
+
+#check to confirm this worked 
+summary(cleaned$NDVI_2021.08.31)
+  #now has the correct range
+  #note: replaced 7 outliers with NAs to account for w/ KNN later 
+
+```
+
+Map this variable and plot scatterplot to confirm it worked
+```{r}
+#load function from external script
+source("C:/Users/Bryant Willoughby/Documents/DRUMS//code/week 1/maps_function.R")
+
+#NDVI 8/31 data 
+lon <- cleaned$x
+lat <- cleaned$y
+dnbr <- cleaned$NDVI_2021.08.31
+
+p <- map.heatmap(lon, lat, dnbr,legendTitle = "dnbr", mainTitle = "DNBR across region")
+print(p)
+
+```
+```{r}
+g <- ggplot(cleaned, aes(x = NDVI_2021.08.31, y = dnbr))
+g + geom_point() + 
+  geom_smooth(method = lm)
+```
+
+
+remind myself what is still missing 
+```{r}
+#find num of missing vals
+missing_counts <- colSums(is.na(cleaned))
+
+#create df w/ col names and missing values 
+missing_data <- data.frame(
+  variable = names(missing_counts), 
+  missing_values = missing_counts
+)
+
+print(missing_data)
+
+```
+
+
+Now remove the 3 other NDVI vars that have >35,000 missing values 
+- all of these missing values are in the NW region (not spread out)
+- KNN not best strategy because missingness is not local
+- neighbors used would not be local and could lead to incorrect analysis 
+
+```{r}
+ncol(cleaned) #116
+
+cleaned <- cleaned %>%
+  select(-c(NDVI_2021.08.27, NDVI_2021.09.01, NDVI_2021.09.06))
+
+ncol(cleaned) #113
+
+```
+
+remind myself of missing data once more
+- notice: there is no more than 4,000 missing obs from any variable 
+- Even so, all of the missing values are now found spread out around region 
+- allows for better KNN procedure to use local data point estimates for imputation 
+- now replacing this missing data w/ an appropriately estimated value 
+```{r}
+#find num of missing vals
+missing_counts <- colSums(is.na(cleaned))
+
+#create df w/ col names and missing values 
+missing_data <- data.frame(
+  variable = names(missing_counts), 
+  missing_values = missing_counts
+)
+
+print(missing_data)
+
+```
+
+Now conduct KNN imputation on all of the missing data points 
+
+KNN: 
+1. set K to choose number of neighbors
+2. calculate distances between target (missing) point and all other points in dataset
+3. sort the calculated distances
+4. getting the labels of the top K entries 
+5. return prediction about the target (missing) point
+```{r}
+#load function to use for imputation 
+knn <- function(long,lat,X,k=10){
+  miss <- which(is.na(X))
+  full <- X
+  for(i in miss){
+    d       <- sqrt((long[i] - long)^2 + (lat[i]  - lat)^2)
+    d[miss] <- Inf
+    neigh   <- order(d)[1:k]
+    full[i] <- mean(X[neigh])
+  }
+  return(full)
+  }
+```
+
+
+Perform KNN on dataset
+```{r}
+for (i in 5:ncol(cleaned)){
+  cleaned[[i]] <- knn(cleaned$x, cleaned$y, cleaned[[i]])
+}
+
+```
+
+
+confirm there are no more missing values 
+```{r}
+#find num of missing vals
+missing_counts <- colSums(is.na(cleaned))
+
+#create df w/ col names and missing values 
+missing_data <- data.frame(
+  variable = names(missing_counts), 
+  missing_values = missing_counts
+)
+
+print(missing_data)
+
+anyNA(cleaned)
+
+```
+
+Rename x/y variables as long/lat respectively 
+```{r}
+cleaned <- cleaned %>%
+  select(y, x, everything()) %>%
+  rename("Lat" = y, "Lon" = x)
+
+```
+
+Write this cleaned data set to a csv file to work with
+```{r}
+head(cleaned)
+
+write.csv(cleaned, file = "C:/Users/Bryant Willoughby/Documents/DRUMS/raw/prefire_knp_blr_finaldata.csv", row.names = F)
+          
+
+```
+
+
+
+
+

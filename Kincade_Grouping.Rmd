@@ -1,0 +1,358 @@
+---
+title: "Kincade_Grouping"
+author: "Bryant Willoughby"
+date: "2023-08-15"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(dplyr)
+library(readr)
+library(ggplot2)
+source("C:/Users/Bryant Willoughby/Documents/DRUMS/code/week 10/boxplot_function.R")
+  #boxplot function 
+source("C:/Users/Bryant Willoughby/Documents/DRUMS/code/week 10/regression_transformation.R")
+  #linear regression transformation function 
+firedate <- as.Date("2019-10-23")
+  #day of fire ignition 
+```
+
+Read in final data
+```{r}
+data <- read_csv("C:/Users/Bryant Willoughby/Documents/DRUMS/raw(Kincade)/Final Data Sets/prefire_kincade_finaldata.csv")
+
+```
+
+
+# Transform variables taken across different days with linear regression
+- Note: 10/23/2019  - lightning strike ignition
+  
+
+Explore LST variable 
+- notice: 08/08 measured twice 
+```{r}
+LST <- data %>%
+  select(starts_with("LST"))
+
+names(LST)
+
+var_boxplot(LST)
+```
+
+
+```{r}
+result <- var_tran(
+  dates = as.Date(c("2019-10-15", "2019-10-22")), 
+  var = LST
+)
+
+# Store the matrix X in LST_sum
+LST_sum <- data.frame(result)
+
+# Name the columns of LST_sum
+colnames(LST_sum) <- c("LST_int", "LST_slope")
+```
+
+
+ET variable
+```{r}
+ET <- data %>%
+  select(starts_with("ET"))
+
+names(ET)
+
+var_boxplot(ET)
+```
+
+
+```{r}
+result <- var_tran(dates = as.Date(c("2019-10-15", "2019-10-22")), 
+                   var = ET
+)
+
+# Store the matrix X in LST_sum
+ET_sum <- data.frame(result)
+
+# Name the columns of LST_sum
+colnames(ET_sum) <- c("ET_int", "ET_slope")
+
+```
+
+
+ESI variable 
+```{r}
+ESI <- data %>%
+  select(starts_with("ESI"))
+
+names(ESI)
+
+var_boxplot(ESI)
+```
+
+
+
+```{r}
+result <- var_tran(dates = as.Date(c("2019-10-15", "2019-10-22")), 
+                   var = ESI
+)
+
+# Store the matrix X in LST_sum
+ESI_sum <- data.frame(result)
+
+# Name the columns of LST_sum
+colnames(ESI_sum) <- c("ESI_int", "ESI_slope")
+```
+
+
+WUE
+```{r}
+WUE <- data %>%
+  select(starts_with("WUE"))
+
+names(WUE)
+
+var_boxplot(WUE)
+```
+
+```{r}
+result <- var_tran(dates = as.Date(c("2019-10-15", "2019-10-22")), 
+                   var = WUE
+)
+
+# Store the matrix X in LST_sum
+WUE_sum <- data.frame(result)
+
+# Name the columns of LST_sum
+colnames(WUE_sum) <- c("WUE_int", "WUE_slope")
+```
+
+
+LAI
+```{r}
+LAI <- data %>%
+  select(starts_with("LAI"))
+
+names(LAI)
+
+var_boxplot(LAI)
+```
+
+
+```{r}
+result <- var_tran(dates = as.Date(c("2019-10-09", "2019-10-13", "2019-10-17", "2019-10-21")), 
+                   var = LAI
+)
+
+# Store the matrix X in LST_sum
+LAI_sum <- data.frame(result)
+
+# Name the columns of LST_sum
+colnames(LAI_sum) <- c("LAI_int", "LAI_slope")
+```
+
+
+NDVI
+```{r}
+NDVI <- data %>%
+  select(starts_with("NDVI"))
+
+names(NDVI)
+
+var_boxplot(NDVI)
+```
+
+
+```{r}
+result <- var_tran(dates = as.Date(c("2019-10-11", "2019-10-13", "2019-10-16", "2019-10-18", "2019-10-21", 
+                                     "2019-10-23")), 
+                   var = NDVI
+)
+
+# Store the matrix X in LST_sum
+NDVI_sum <- data.frame(result)
+
+# Name the columns of LST_sum
+colnames(NDVI_sum) <- c("NDVI_int", "NDVI_slope")
+```
+
+AM_soil_moisture
+```{r}
+AM_sm <- data %>%
+  select(starts_with("AM"))
+
+names(AM_sm)
+
+var_boxplot(AM_sm)
+```
+
+
+```{r}
+result <- var_tran(dates = as.Date(c("2019-10-11", "2019-10-13", "2019-10-14", "2019-10-16", "2019-10-19", 
+                                     "2019-10-21", "2019-10-22", "2019-10-24")), 
+                   var = AM_sm
+)
+
+# Store the matrix X in LST_sum
+AM_sm_sum <- data.frame(result)
+
+# Name the columns of LST_sum
+colnames(AM_sm_sum) <- c("AM_sm_int", "AM_sm_slope")
+```
+
+
+PM soil moisture 
+```{r}
+PM_sm <- data %>%
+  select(starts_with("soil"))
+
+names(PM_sm)
+
+var_boxplot(PM_sm)
+```
+
+
+```{r}
+result <- var_tran(dates = as.Date(c("2019-10-12", "2019-10-15", "2019-10-17", "2019-10-18", "2019-10-20", 
+                                     "2019-10-23")), 
+                   var = PM_sm
+)
+
+# Store the matrix X in LST_sum
+PM_sm_sum <- data.frame(result)
+
+# Name the columns of LST_sum
+colnames(PM_sm_sum) <- c("PM_sm_int", "PM_sm_slope")
+```
+
+
+Dewpoint temp (tdmean)
+```{r}
+tdmean <- data %>%
+  select(starts_with("tdmean"))
+
+names(tdmean)
+
+var_boxplot(tdmean)
+```
+
+
+```{r}
+result <- var_tran(dates = as.Date(c("2019-10-11", "2019-10-12", "2019-10-13", "2019-10-14", "2019-10-15", 
+                                     "2019-10-16", "2019-10-17", "2019-10-18", "2019-10-19", "2019-10-20", 
+                                     "2019-10-21", "2019-10-22", "2019-10-23", "2019-10-24")), 
+                   var = tdmean
+)
+
+# Store the matrix X in LST_sum
+tdmean_sum <- data.frame(result)
+
+# Name the columns of LST_sum
+colnames(tdmean_sum) <- c("tdmean_int", "tdmean_slope")
+```
+
+
+Air temp (tmean)
+```{r}
+tmean <- data %>%
+  select(starts_with("tmean"))
+
+names(tmean)
+
+var_boxplot(tmean)
+```
+
+
+```{r}
+result <- var_tran(dates = as.Date(c("2019-10-11", "2019-10-12", "2019-10-13", "2019-10-14", "2019-10-15", 
+                                     "2019-10-16", "2019-10-17", "2019-10-18", "2019-10-19", "2019-10-20", 
+                                     "2019-10-21", "2019-10-22", "2019-10-23", "2019-10-24")), 
+                   var = tmean
+)
+
+# Store the matrix X in LST_sum
+tmean_sum <- data.frame(result)
+
+# Name the columns of LST_sum
+colnames(tmean_sum) <- c("tmean_int", "tmean_slope")
+```
+
+
+Vapor Pressure Max (vpdmax)
+```{r}
+vpdmax <- data %>%
+  select(starts_with("vpdmax"))
+
+names(vpdmax)
+
+var_boxplot(vpdmax)
+```
+
+
+```{r}
+result <- var_tran(dates = as.Date(c("2019-10-11", "2019-10-12", "2019-10-13", "2019-10-14", "2019-10-15", 
+                                     "2019-10-16", "2019-10-17", "2019-10-18", "2019-10-19", "2019-10-20", 
+                                     "2019-10-21", "2019-10-22", "2019-10-23", "2019-10-24")), 
+                   var = vpdmax
+)
+
+# Store the matrix X in LST_sum
+vpdmax_sum <- data.frame(result)
+
+# Name the columns of LST_sum
+colnames(vpdmax_sum) <- c("vpdmax_int", "vpdmax_slope")
+
+```
+
+
+Vapor Pressure Min (vpdmin)
+```{r}
+vpdmin <- data %>%
+  select(starts_with("vpdmin"))
+
+names(vpdmin)
+
+var_boxplot(vpdmin)
+```
+
+
+```{r}
+result <- var_tran(dates = as.Date(c("2019-10-11", "2019-10-12", "2019-10-13", "2019-10-14", "2019-10-15", 
+                                     "2019-10-16", "2019-10-17", "2019-10-18", "2019-10-19", "2019-10-20", 
+                                     "2019-10-21", "2019-10-22", "2019-10-23", "2019-10-24")), 
+                   var = vpdmin
+)
+
+# Store the matrix X in LST_sum
+vpdmin_sum <- data.frame(result)
+
+# Name the columns of LST_sum
+colnames(vpdmin_sum) <- c("vpdmin_int", "vpdmin_slope")
+
+```
+
+
+Create df w/ slope & intercept term
+```{r}
+newdata <- data %>%
+  select("Lat", "Lon", "dnbr6", "dnbr", 
+         "aspect", "slope", "elev", "LC")
+
+fulldata <- cbind(newdata, LST_sum, ET_sum, ESI_sum, 
+                  WUE_sum, LAI_sum, NDVI_sum, AM_sm_sum, 
+                  PM_sm_sum, tdmean_sum, tmean_sum, vpdmax_sum, 
+                  vpdmin_sum)
+
+```
+
+Write to CSV
+```{r}
+write.csv(fulldata, "C:/Users/Bryant Willoughby/Documents/DRUMS/raw(Kincade)/Final Data Sets/prefire_kincade_grouped_finaldata.csv", row.names = F)
+```
+
+
+
+
+
+

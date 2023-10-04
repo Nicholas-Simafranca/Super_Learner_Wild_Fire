@@ -1,0 +1,373 @@
+---
+title: "CZU_grouping"
+author: "Bryant Willoughby"
+date: "2023-08-01"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(dplyr)
+library(readr)
+library(ggplot2)
+source("C:/Users/Bryant Willoughby/Documents/DRUMS/code/week 10/boxplot_function.R")
+  #boxplot function 
+source("C:/Users/Bryant Willoughby/Documents/DRUMS/code/week 10/regression_transformation.R")
+  #linear regression transformation function 
+firedate <- as.Date("2020-08-16")
+  #day of fire ignition 
+```
+
+
+
+Read in final data
+```{r}
+data <- read_csv("C:/Users/Bryant Willoughby/Documents/DRUMS/raw(CZU)/Final Data Sets/prefire_czu_finaldata.csv")
+
+```
+
+# Transform variables taken across different days with linear regression
+- Note: 8/16/2020 - lightning strike ignition
+  
+
+Explore LST variable 
+- notice: 08/08 measured twice 
+```{r}
+LST <- data %>%
+  select(starts_with("LST"))
+
+names(LST)
+
+var_boxplot(LST)
+```
+
+combine two measurements taken on 8/8 by averaging and replacing 
+```{r}
+LST <- LST %>%
+  mutate("LST_2020.08.08.00.00.00" = rowMeans(select(., c("LST_2020.08.08.03.00.00", 
+                                                          "LST_2020.08.08.19.00.00")), 
+                                              na.rm = TRUE)) %>%
+  select(-c("LST_2020.08.08.03.00.00", "LST_2020.08.08.19.00.00"))
+
+```
+
+```{r}
+var_boxplot(LST)
+```
+
+
+```{r}
+result <- var_tran(
+  dates = as.Date(c("2020-08-04", "2020-08-08", "2020-08-12", "2020-08-15", "2020-08-16")), 
+  var = LST
+)
+
+# Store the matrix X in LST_sum
+LST_sum <- data.frame(result)
+
+# Name the columns of LST_sum
+colnames(LST_sum) <- c("LST_int", "LST_slope")
+```
+
+
+ET variable
+```{r}
+ET <- data %>%
+  select(starts_with("ET"))
+
+names(ET)
+
+var_boxplot(ET)
+```
+
+
+```{r}
+result <- var_tran(dates = as.Date(c("2020-08-04", "2020-08-08", "2020-08-15", "2020-08-16")), 
+                   var = ET
+)
+
+# Store the matrix X in LST_sum
+ET_sum <- data.frame(result)
+
+# Name the columns of LST_sum
+colnames(ET_sum) <- c("ET_int", "ET_slope")
+
+```
+
+ESI variable 
+```{r}
+ESI <- data %>%
+  select(starts_with("ESI"))
+
+names(ESI)
+
+var_boxplot(ESI)
+```
+
+```{r}
+result <- var_tran(dates = as.Date(c("2020-08-04", "2020-08-08", "2020-08-15", "2020-08-16")), 
+                   var = ESI
+)
+
+# Store the matrix X in LST_sum
+ESI_sum <- data.frame(result)
+
+# Name the columns of LST_sum
+colnames(ESI_sum) <- c("ESI_int", "ESI_slope")
+```
+
+WUE
+```{r}
+WUE <- data %>%
+  select(starts_with("WUE"))
+
+names(WUE)
+
+var_boxplot(WUE)
+```
+
+```{r}
+result <- var_tran(dates = as.Date(c("2020-08-04", "2020-08-08", "2020-08-15", "2020-08-16")), 
+                   var = WUE
+)
+
+# Store the matrix X in LST_sum
+WUE_sum <- data.frame(result)
+
+# Name the columns of LST_sum
+colnames(WUE_sum) <- c("WUE_int", "WUE_slope")
+```
+
+LAI
+```{r}
+LAI <- data %>%
+  select(starts_with("LAI"))
+
+names(LAI)
+
+var_boxplot(LAI)
+```
+
+```{r}
+result <- var_tran(dates = as.Date(c("2020-08-05", "2020-08-13")), 
+                   var = LAI
+)
+
+# Store the matrix X in LST_sum
+LAI_sum <- data.frame(result)
+
+# Name the columns of LST_sum
+colnames(LAI_sum) <- c("LAI_int", "LAI_slope")
+```
+
+NDVI
+```{r}
+NDVI <- data %>%
+  select(starts_with("NDVI"))
+
+names(NDVI)
+
+var_boxplot(NDVI)
+```
+
+
+```{r}
+result <- var_tran(dates = as.Date(c("2020-08-03", "2020-08-08", "2020-08-10",
+                                     "2020-08-13")), 
+                   var = NDVI
+)
+
+# Store the matrix X in LST_sum
+NDVI_sum <- data.frame(result)
+
+# Name the columns of LST_sum
+colnames(NDVI_sum) <- c("NDVI_int", "NDVI_slope")
+```
+
+
+AM_soil_moisture
+```{r}
+AM_sm <- data %>%
+  select(starts_with("AM"))
+
+names(AM_sm)
+
+var_boxplot(AM_sm)
+```
+
+```{r}
+result <- var_tran(dates = as.Date(c("2020-08-04", "2020-08-05", "2020-08-07",
+                   "2020-08-10", "2020-08-12", "2020-08-13", 
+                   "2020-08-15")), 
+                   var = AM_sm
+)
+
+# Store the matrix X in LST_sum
+AM_sm_sum <- data.frame(result)
+
+# Name the columns of LST_sum
+colnames(AM_sm_sum) <- c("AM_sm_int", "AM_sm_slope")
+```
+
+
+PM soil moisture 
+```{r}
+PM_sm <- data %>%
+  select(starts_with("soil"))
+
+names(PM_sm)
+
+var_boxplot(PM_sm)
+```
+
+
+```{r}
+result <- var_tran(dates = as.Date(c("2020-08-03", "2020-08-06", "2020-08-08",
+                   "2020-08-09", "2020-08-11", "2020-08-14", 
+                   "2020-08-16", "2020-08-17")), 
+                   var = PM_sm
+)
+
+# Store the matrix X in LST_sum
+PM_sm_sum <- data.frame(result)
+
+# Name the columns of LST_sum
+colnames(PM_sm_sum) <- c("PM_sm_int", "PM_sm_slope")
+```
+
+
+Dewpoint temp (tdmean)
+```{r}
+tdmean <- data %>%
+  select(starts_with("tdmean"))
+
+names(tdmean)
+
+var_boxplot(tdmean)
+```
+
+```{r}
+result <- var_tran(dates = as.Date(c("2020-08-02", "2020-08-03", "2020-08-04",
+                   "2020-08-05", "2020-08-06", "2020-08-07", 
+                   "2020-08-08", "2020-08-09", "2020-08-10", 
+                   "2020-08-11", "2020-08-12", "2020-08-13", 
+                   "2020-08-14", "2020-08-15", "2020-08-16")), 
+                   var = tdmean
+)
+
+# Store the matrix X in LST_sum
+tdmean_sum <- data.frame(result)
+
+# Name the columns of LST_sum
+colnames(tdmean_sum) <- c("tdmean_int", "tdmean_slope")
+```
+
+Air temp (tmean)
+```{r}
+tmean <- data %>%
+  select(starts_with("tmean"))
+
+names(tmean)
+
+var_boxplot(tmean)
+```
+
+```{r}
+result <- var_tran(dates = as.Date(c("2020-08-02", "2020-08-03", "2020-08-04",
+                   "2020-08-05", "2020-08-06", "2020-08-07", 
+                   "2020-08-08", "2020-08-09", "2020-08-10", 
+                   "2020-08-11", "2020-08-12", "2020-08-13", 
+                   "2020-08-14", "2020-08-15", "2020-08-16")), 
+                   var = tmean
+)
+
+# Store the matrix X in LST_sum
+tmean_sum <- data.frame(result)
+
+# Name the columns of LST_sum
+colnames(tmean_sum) <- c("tmean_int", "tmean_slope")
+```
+
+Vapor Pressure Max (vpdmax)
+```{r}
+vpdmax <- data %>%
+  select(starts_with("vpdmax"))
+
+names(vpdmax)
+
+var_boxplot(vpdmax)
+```
+
+```{r}
+result <- var_tran(dates = as.Date(c("2020-08-02", "2020-08-03", "2020-08-04",
+                   "2020-08-05", "2020-08-06", "2020-08-07", 
+                   "2020-08-08", "2020-08-09", "2020-08-10", 
+                   "2020-08-11", "2020-08-12", "2020-08-13", 
+                   "2020-08-14", "2020-08-15", "2020-08-16")), 
+                   var = vpdmax
+)
+
+# Store the matrix X in LST_sum
+vpdmax_sum <- data.frame(result)
+
+# Name the columns of LST_sum
+colnames(vpdmax_sum) <- c("vpdmax_int", "vpdmax_slope")
+
+```
+
+
+Vapor Pressure Min (vpdmin)
+```{r}
+vpdmin <- data %>%
+  select(starts_with("vpdmin"))
+
+names(vpdmin)
+
+var_boxplot(vpdmin)
+```
+
+```{r}
+result <- var_tran(dates = as.Date(c("2020-08-02", "2020-08-03", "2020-08-04",
+                   "2020-08-05", "2020-08-06", "2020-08-07", 
+                   "2020-08-08", "2020-08-09", "2020-08-10", 
+                   "2020-08-11", "2020-08-12", "2020-08-13", 
+                   "2020-08-14", "2020-08-15", "2020-08-16")), 
+                   var = vpdmin
+)
+
+# Store the matrix X in LST_sum
+vpdmin_sum <- data.frame(result)
+
+# Name the columns of LST_sum
+colnames(vpdmin_sum) <- c("vpdmin_int", "vpdmin_slope")
+
+```
+
+Create df w/ slope & intercept term
+```{r}
+newdata <- data %>%
+  select("Lat", "Lon", "dnbr6", "dnbr", 
+         "aspect", "slope", "elev", "LC")
+
+fulldata <- cbind(newdata, LST_sum, ET_sum, ESI_sum, 
+                  WUE_sum, LAI_sum, NDVI_sum, AM_sm_sum, 
+                  PM_sm_sum, tdmean_sum, tmean_sum, vpdmax_sum, 
+                  vpdmin_sum)
+
+```
+
+
+Write to CSV
+```{r}
+write.csv(fulldata, "C:/Users/Bryant Willoughby/Documents/DRUMS/raw(CZU)/Final Data Sets/prefire_czu_grouped_finaldata.csv", row.names = F)
+```
+
+
+```{r}
+finalgrouped <- read_csv("C:/Users/Bryant Willoughby/Documents/DRUMS/raw(CZU)/Final Data Sets/prefire_czu_grouped_finaldata.csv")
+
+```
+
+
+
