@@ -32,7 +32,10 @@ This folder contains miscellaneous functions used over the duration of this proj
 - etc.
 
 ### /Methods
-This folder includes 
+This folder includes the SL algorithm, an ensemble learning method that combines base learners to achieve superior predictive accuracy. Codes are broken up across: 
+
+- four separate fires
+- combined data from all four fires 
 
 ### /Results
 
