@@ -1,0 +1,124 @@
+---
+title: "Kincade_LR_Ind_Coords"
+author: "Bryant Willoughby"
+date: "2023-12-24"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(SuperLearner)
+library(GpGp)
+library(ggplot2)
+library(caret)
+```
+
+
+Read in fulldata
+```{r}
+fulldata <- read_csv("C:/Users/Bryant Willoughby/Documents/DRUMS/raw(Kincade)/Final data sets/prefire_kincade_grouped_standard_finaldata.csv")
+```
+
+Read in training/test data 
+```{r}
+train <- read_csv("C:/Users/Bryant Willoughby/Documents/DRUMS/raw(Kincade)/intermediate/Kincade_traindata.csv")
+
+test <- read_csv("C:/Users/Bryant Willoughby/Documents/DRUMS/raw(Kincade)/intermediate/Kincade_testdata.csv")
+```
+
+
+Linear Regression (Independent covariance) Results 
+```{r}
+#print selected variables 
+selected_variables <- names(train)[(2:3)]
+
+#fit the final model using selected variables 
+final_model <- lm(dnbr ~ ., data = train[, c("dnbr", selected_variables)])
+
+#anova(final_model)
+summary(final_model) 
+
+```
+
+Use fitted coefficients to make predictions on test data 
+```{r}
+#make dnbr preds 
+predicted_values <- predict(final_model, newdata = test[,c(2:3)])
+
+preds <- as.vector(predicted_values)
+```
+
+# RMSE calculation
+```{r}
+source("C:/Users/Bryant Willoughby/Documents/DRUMS/code/week a/RMSE_function.R")
+actual <- test$dnbr
+predicted <- preds
+
+val_RMSE <- RMSE(actual, predicted)
+
+val_RMSE <- round(val_RMSE,0)
+val_RMSE
+```
+
+# Create confusion matrix
+
+```{r}
+range(fulldata$dnbr)
+  #not: dNBR < -550 not considered burned 
+
+nrow(fulldata %>% filter(dnbr < -550)) 
+  #only 4 entire records with these anomalies; leave for simpler subsequent analysis
+```
+
+Create summary table for confusion matrix computation
+```{r}
+data <- test[4] %>%
+  mutate("dnbr_class" = if_else(dnbr >= 660, 7, 
+                                if_else(dnbr >= 440, 6, 
+                                if_else(dnbr >= 270, 5,
+                                if_else(dnbr >= 100, 4,
+                                if_else(dnbr >= -100, 3, 
+                                if_else(dnbr >= -250, 2, 1)))))), 
+         "dnbr_preds" = preds, 
+         "dnbr_preds_class" = if_else(preds >= 660, 7, 
+                                if_else(preds >= 440, 6, 
+                                if_else(preds >= 270, 5,
+                                if_else(preds >= 100, 4,
+                                if_else(preds >= -100, 3, 
+                                if_else(preds >= -250, 2, 1)))))))
+
+```
+
+
+```{r}
+#Creates vectors having data points
+expected_val <- factor(data$dnbr_class)
+predicted_val <- factor(data$dnbr_preds_class)
+
+#Creating confusion matrix
+confusion_mat <- confusionMatrix(data=predicted_val, reference = expected_val)
+
+confusion_mat
+  #note: Accuracy = number of correct predictions / total number of predictions
+```
+
+Classification accuracy (CA)
+```{r}
+CA <- confusion_mat$overall[[1]]
+CA <- round(CA, 3)
+CA <- CA*100
+CA
+```
+
+Classification accuracy high (CA-high)
+```{r}
+CA_high <- confusion_mat$table[7,7] / sum(confusion_mat$table[,7])
+CA_high <- round(CA_high, 4)
+CA_high <- CA_high*100
+CA_high
+```
+
+
+
+
