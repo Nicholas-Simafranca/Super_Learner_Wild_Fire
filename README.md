@@ -2,14 +2,6 @@
 
 We develop a novel machine learning model to predict post-fire burn severity using pre-fire remotely sensed data. Hydrological, ecological, and topographical variables collected from four regions of California — the site of the Kincade fire (2019), the CZU Lightning Complex fire (2020), the Windy fire (2021), and the KNP Fire (2021) — are used as predictors of a burn severity response variable. 
 
-## Table of Contents
-
-- [Folder Structure](#folder-structure)
-- [Usage](#usage)
-- [Installation](#installation)
-- [Contributing](#contributing)
-- [License](#license)
-
 ## Folder Structure
 
 These folders contain the complete end-to-end coding processes used in this project.  
@@ -38,19 +30,10 @@ This folder includes the SL algorithm, an ensemble learning method that combines
 - combined data from all four fires 
 
 ### /Results
+This folder includes the results obtained for both within-fire predictions and combined-fire predictions. Four different types of models are compared across these predictions. These models differ by whether the original covariates or base learners are included in the mean and whether the spatial random effects are included in the covariance. The codes for such analyses are organized by: 
 
-## Usage
+1. FIRE_LR_Ind.Rmd
+2. FIRE_LR_spatial.Rmd
+3. FIRE_SL_Ind.Rmd
+4. FIRE_SL_spatial.Rmd
 
-Provide examples or instructions on how to use your project.
-
-## Installation
-
-Guide users on how to install or set up your project.
-
-## Contributing
-
-Explain how others can contribute to your project.
-
-## License
-
-Specify the project's license information.
