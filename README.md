@@ -27,10 +27,9 @@ This folder contains miscellaneous functions used over the duration of this proj
 - Other relevant functions used in project
 
 ### /Methods
-This folder includes the SL algorithm, an ensemble learning method that combines base learners to achieve superior predictive accuracy. Codes are broken up across: 
+We implement a SL algorithm, an ensemble learning method that combines base learners to achieve superior predictive accuracy. Details are left to reader. Codes are organized according to the following naming convention: 
 
-- four separate fires
-- combined data from all four fires 
+- FIRE_SuperLearner.py 
 
 ### /Results
 This folder includes the results obtained for both within-fire predictions and combined-fire predictions. Four different types of models are compared across these predictions. These models differ by whether the original covariates or base learners are included in the mean and whether the spatial random effects are included in the covariance. The codes for such analyses are organized by: 
