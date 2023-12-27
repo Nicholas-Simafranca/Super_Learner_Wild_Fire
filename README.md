@@ -1,6 +1,6 @@
 # Modeling wildland fire burn severity in California using a spatial super learner approach
 
-We develop a novel machine learning model to predict post-fire burn severity using pre-fire remotely sensed data. Hydrological, ecological, and topographical variables collected from four regions of California — the site of the Kincade fire (2019), the CZU Lightning Complex fire (2020), the Windy fire (2021), and the KNP Fire (2021) — are used as predictors of a burn severity response variable. We first analyze the four fires separately to obtain within-fire predictions. We also combined data from all four fires to form within-fire predictions. 
+We develop a novel machine learning model to predict post-fire burn severity using pre-fire remotely sensed data. Hydrological, ecological, and topographical variables collected from four regions of California — the site of the Kincade fire (2019), the CZU Lightning Complex fire (2020), the Windy fire (2021), and the KNP Fire (2021) — are used as predictors of a burn severity response variable. We first analyze the four fires separately to obtain within-fire predictions. We also combine data from all four fires to form within-fire predictions. 
 
 ## Folder Structure
 
