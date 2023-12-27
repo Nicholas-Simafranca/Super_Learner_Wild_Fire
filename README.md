@@ -27,7 +27,7 @@ This folder contains miscellaneous functions used over the duration of this proj
 - Other relevant functions used in project
 
 ### /Methods
-We implement a SL algorithm, an ensemble learning method that combines base learners to achieve superior predictive accuracy. Details are left to reader. Codes are organized according to the following naming convention: 
+This folder contains our implementation of a Super Learner algorithm, an ensemble learning method that combines base learners to achieve superior predictive accuracy. Details are left to reader. Codes are organized according to the following naming convention: 
 
 - FIRE_SuperLearner.py 
 
