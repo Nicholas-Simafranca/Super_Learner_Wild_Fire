@@ -12,7 +12,7 @@ We develop a novel machine learning model to predict post-fire burn severity usi
 
 ## Folder Structure
 
-Describe the content and purpose of each main folder in your project.
+These folders contain the complete end-to-end coding processes used in this project.  
 
 ### /src
 This folder contains the source code for the project.
