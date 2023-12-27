@@ -4,7 +4,7 @@ We develop a novel machine learning model to predict post-fire burn severity usi
 
 ## Folder Structure
 
-These folders contain the complete end-to-end coding processes used in this project.  
+These folders contain the complete end-to-end coding used in this project.  
 
 ### /Data Manipulation
 This folder contains the data manipulation. Codes are organized according to three different file names in which reproducible processes were carried out: 
@@ -21,10 +21,10 @@ This folder contains the data manipulation. Codes are organized according to thr
 ### /Functions
 This folder contains miscellaneous functions used over the duration of this project, such as:
 
+- Mapping plot
 - KNN Imputation method
 - Main effects plot
-- Mapping plot
-- etc.
+- Other relevant functions used in project
 
 ### /Methods
 This folder includes the SL algorithm, an ensemble learning method that combines base learners to achieve superior predictive accuracy. Codes are broken up across: 
