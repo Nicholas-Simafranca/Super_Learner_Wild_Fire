@@ -39,3 +39,8 @@ This folder contains our results obtained for both within-fire predictions and c
 3. FIRE_SL_Ind.Rmd
 4. FIRE_SL_spatial.Rmd
 
+There are also comparison models to observe the possible effects of latitude and longitude (as additional covariates) in all of the regression models considered. Codes are organized by the following name: 
+
+- FIRE_LR_Ind_Coords.Rmd
+- FIRE_LR_spatial_Coords.Rmd
+
