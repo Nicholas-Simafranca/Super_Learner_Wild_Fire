@@ -4,7 +4,7 @@ We develop a novel machine learning model to predict post-fire burn severity usi
 
 ## Folder Structure
 
-These folders contain the complete end-to-end coding used in this project.  
+These folders contain the complete end-to-end coding workflow used in this project.  
 
 ### /Data Manipulation
 This folder contains the data manipulation. Codes are organized according to three different file names in which reproducible processes were carried out: 
