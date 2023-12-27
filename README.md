@@ -10,15 +10,13 @@ These folders contain the complete end-to-end coding processes used in this proj
 This folder contains the data manipulation. Codes are organized according to three different file names in which reproducible processes were carried out: 
 
 - FIRE_EDA.Rmd
-     - To resolve collinearity between subsequent measurements and harmonize variables across fires with a different number of replications of the variables, we convert the sequence of observations to estimates of the current value and the trend at the time of ignition for each pixel
+     - Removed variables with more than 28% missing pixels
+     - Missing observations were imputed using K Nearest Neighbor Imputation, with k=10 and distance defined used latitude & longitude
 - FIRE_Grouping.Rmd
+     - Many of the variables are collected at different times within the two-week period leading up to fire ignition
+          - Convert the sequence of observations to estimates of the current value and the trend at the time of ignition for each pixel 
 - FIRE_final_grouping.Rmd
-
-- Missing data is present due to factors such as cloud coverage; We removed variables with more than 28% missing pixels across each geographic region
-- For the remaining variables, missing observations were imputed using K Nearest Neighbor imputation, with k=10 and distance defined using latitude and longitude
-- Many of the variables are collected at different times within the two-week period leading up to the fire ignition
-
-    - To resolve collinearity between subsequent measurements and harmonize variables across fires with a different number of replications of the variables, we convert the sequence of observations to estimates of the current value and the trend at the time of ignition for each pixel
+     - Standardize all covariates in data set before subsequent analysis 
 
 ### /Functions
 This folder contains miscellaneous functions used over the duration of this project, such as:
