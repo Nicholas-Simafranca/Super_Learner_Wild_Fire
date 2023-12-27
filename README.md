@@ -32,7 +32,7 @@ This folder contains our implementation of a Super Learner algorithm, an ensembl
 - FIRE_SuperLearner.py 
 
 ### /Results
-This folder includes the results obtained for both within-fire predictions and combined-fire predictions. Four different types of models are compared across these predictions. These models differ by whether the original covariates or base learners are included in the mean and whether the spatial random effects are included in the covariance. The codes for such analyses are organized by: 
+This folder contains our results obtained for both within-fire predictions and combined-fire predictions. Our analysis consists of comparison across four different types of models. These models differ by whether the original covariates or base learners are included in the mean and whether the spatial random effects are included in the covariance. Further details are left to reader. The naming convention of these codes reflect the different models used for prediction: 
 
 1. FIRE_LR_Ind.Rmd
 2. FIRE_LR_spatial.Rmd
