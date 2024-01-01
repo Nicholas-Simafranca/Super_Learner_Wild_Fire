@@ -24,6 +24,7 @@ This folder contains miscellaneous functions used over the duration of this proj
 - Mapping plot
 - KNN Imputation method
 - Main effects plot
+- Example code of extracting variable importance
 - Other relevant functions used in project
 
 ### /Methods
